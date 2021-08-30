@@ -40,6 +40,7 @@ other attributes:
 16. poutcome: outcome of the previous marketing campaign (categorical: "unknown","other","failure","success")
 
 Output variable (desired target):
+
 17. y - has the client subscribed a term deposit? (binary: "yes","no")
 
     Missing Attribute Values: None
