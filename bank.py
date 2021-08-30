@@ -1,4 +1,7 @@
-#Business problem : Whether the client has subcribed a term deposit or not in a bank
+#Business problem : Whether the client has subcribed a term deposit or not in a bank 
+#Market targeting
+
+#based on the age, balance, loan, job, marital statuts we need to predict the term deposit is done or not
 
 
 
@@ -19,35 +22,31 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import RobustScaler
 from sklearn.decomposition import PCA
 
-
 #Load the data
 
-data = pd.read_csv("/home/shiva/Desktop/Pipelines/data/train.csv")
+data = pd.read_csv("/home/shiva/Desktop/Pipelines/data/train.csv",delimiter=";")
 
+data.head()
 #EDA
 
 data.shape
-#(45211, 32)
-
-#the data contains 32 features/variables
-# 1. Feature Engineering
-# By performing feature Engineering, we will be knowing:
-# what features to be considered with respective to the target variable 
+#(45211, 17)
+#the data contains 17 features/variables
 
 data.describe()
-#By looking the data, data to be scaled.
+#By looking the data, data conversion to be done
+#label encoding - categorical 
+#one hot encoding - binary
 
 data.columns
 
-#'age', 'default', 'balance', 'housing', 'loan', 'duration', 'campaign','pdays', 'previous', 'poutfailure', 'poutother', 'poutsuccess',
-#'poutunknown', 'con_cellular', 'con_telephone', 'con_unknown','divorced', 'married', 'single', 'joadmin.', 'joblue.collar',
-#'joentrepreneur', 'johousemaid', 'jomanagement', 'joretired','joself.employed', 'joservices', 'jostudent', 'jotechnician', jounemployed', 'jounknown', 'y'
+#'age', 'job', 'marital', 'education', 'default', 'balance', 'housing',
+#'loan', 'contact', 'day', 'month', 'duration', 'campaign', 'pdays',
+#'previous', 'poutcome', 'y'
 
 # Target variable named "y" 
 # Binary target variable 0 or 1
 data["y"].unique()
-
-# based on the age, balance, loan, job, marital statuts we need to predict the term deposit is done or not
 
 data["y"].value_counts()
 #Imbalanced data
@@ -59,5 +58,29 @@ data["y"].value_counts()
 
 
 #Find any duplicates in the data
-data.duplicated()
+data.duplicated().sum()
+
+#there are no duplicate values in the data
+
+#find any null values in the data
+data.isnull().sum()
+
+#No null values
+
+#Check the data types of the data
+
+data.info()
+#int and object type are there
+
+for col in data.columns:
+    if data[col].dtype == "object":
+        print("*"*40)
+        print("\n", data[col].value_counts())
+    else:
+        pass
+
+#we can observe the output lot of unknown values
+#In Job, Education, Contact, Poutcome
+
+
 
