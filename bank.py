@@ -31,7 +31,7 @@ import seaborn as sns
 #As i observed space before values in some columns 
 #To overcome this, "skipinitalspace = True" while loading the data
 #%%
-data = pd.read_csv("/home/shiva/Desktop/Pipelines/data/train.csv",delimiter=";",)
+data = pd.read_csv("/home/shiva/Desktop/Pipelines/data/train.csv",delimiter=";")
 
 #%%
 data.head()
@@ -191,7 +191,7 @@ cat_cols.pop()
 
 X_d = pd.get_dummies(X,drop_first=False,columns=cat_cols)
 #%%
-del X_train,X_test,y_test,y_train
+#del X_train,X_test,y_test,y_train
 
 #%%
 X_train,X_test,y_train,y_test = train_test_split(X_d,y,test_size=0.3,random_state=42)
