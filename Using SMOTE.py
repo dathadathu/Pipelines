@@ -2,6 +2,7 @@
 from time import time
 import pandas as pd
 import numpy as np
+from scipy.sparse.construct import random
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
@@ -138,7 +139,7 @@ X
 y
 #%%
 
-%%time
+####%%time
 cat_cols = []
 for i in data.columns:
     if data[i].dtype == "object":
@@ -155,7 +156,7 @@ cat_cols
 
 X_d = pd.get_dummies(X,drop_first=False,columns=cat_cols)
 #%%
-del X_train,X_test,y_test,y_train
+#del X_train,X_test,y_test,y_train
 
 #%%
 X_train,X_test,y_train,y_test = train_test_split(X_d,y,test_size=0.3,random_state=42)
@@ -196,9 +197,77 @@ parameters.values()
 
 
 #%%
-sv = SVC(kernel='sigmoid')
-clf = GridSearchCV(sv, parameters, cv=5, verbose=5, n_jobs=3)
+sv = RandomForestClassifier(n_estimators=100,random_state=42,n_jobs=-1)
+clf = GridSearchCV(sv, parameters, cv=5, verbose=5, n_jobs=-1)
 
 #%%
 clf.fit(X_train_res, y_train_res.ravel())
+# %%
+clf.best_params_
+
+#%%
+svvv = SVC(C=1,kernel='sigmoid',random_state=42)
+
+#%%
+svvv.fit(X_train_res, y_train_res.ravel())
+# %%
+import itertools
+
+#%%
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=0)
+    plt.yticks(tick_marks, classes)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        #print("Normalized confusion matrix")
+    else:
+        1#print('Confusion matrix, without normalization')
+
+    #print(cm)
+
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, cm[i, j],
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+# %%
+y_train_pre = svvv.predict(X_train)
+
+cnf_matrix_tra = confusion_matrix(y_train, y_train_pre)
+
+print("Recall metric in the train dataset: {}%".format(100*cnf_matrix_tra[1,1]/(cnf_matrix_tra[1,0]+cnf_matrix_tra[1,1])))
+
+
+class_names = [0,1]
+plt.figure()
+plot_confusion_matrix(cnf_matrix_tra , classes=class_names, title='Confusion matrix')
+plt.show()
+# %%
+y_pre = svvv.predict(X_test)
+
+cnf_matrix = confusion_matrix(y_test, y_pre)
+
+print("Recall metric in the testing dataset: {}%".format(100*cnf_matrix[1,1]/(cnf_matrix[1,0]+cnf_matrix[1,1])))
+#print("Precision metric in the testing dataset: {}%".format(100*cnf_matrix[0,0]/(cnf_matrix[0,0]+cnf_matrix[1,0])))
+# Plot non-normalized confusion matrix
+class_names = [0,1]
+plt.figure()
+plot_confusion_matrix(cnf_matrix , classes=class_names, title='Confusion matrix')
+plt.show()
 # %%
